@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import SeasonDisplay from './SeasonDisplay';
+import Spinner from './Spinner';
+
 
 // Functional style:
 
@@ -21,7 +23,7 @@ class App extends React.Component {
   //   // THIS IS THE ONLY TIME we do direct assignment to this.state (in the constructor)
   //   this.state = {lat: null, long: null, errorMessage: ''};
   // }
-  state = {lat: null, long: null, errorMessage: ''}
+  state = {lat: null, errorMessage: ''}
 
   componentDidMount() {
     window.navigator.geolocation.getCurrentPosition(
@@ -30,16 +32,24 @@ class App extends React.Component {
     )
   }
 
+  renderContent() {
+    if (this.state.errorMessage && !this.state.lat) {
+      return <div>Error: {this.state.errorMessage}</div>
+    }
+
+    if (!this.state.errorMessage && this.state.lat) {
+      return <SeasonDisplay lat={this.state.lat} />
+    }
+
+    return <Spinner message="Please accept location request"/>;
+  }
+
   render() {
-      if (this.state.errorMessage && !this.state.lat) {
-        return <div>Error: {this.state.errorMessage}</div>
-      }
-
-      if (!this.state.errorMessage && this.state.lat) {
-        return <SeasonDisplay lat={this.state.lat} />
-      }
-
-      return <div>Loading</div>;
+      return (
+        <div className="fakename">
+          {this.renderContent()}
+        </div>
+      )
   }
 }
 
